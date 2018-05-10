@@ -1,0 +1,16 @@
+package graphics;
+
+import java.util.HashMap;
+
+public class Test {
+	public static void main(String[] args) {
+		HashMap<int[], Integer> map = new HashMap<>();
+		int[] a = new int[] {1,2,3};
+		int[] b = new int[] {1,2,3};
+		
+		map.put(a, 1);
+		map.put(b, 2);
+		
+		System.out.println(map.get(a));
+	}
+}

@@ -1,0 +1,152 @@
+package graphics;
+
+import java.nio.IntBuffer;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.util.glsl.ShaderState;
+
+public class Block {
+	static final int[] cube_index_data = new int[] {
+			0,1,
+			0,3,
+			0,7,
+			1,2,
+			1,6,
+			2,3,
+			2,5,
+			3,4,
+			4,5,
+			4,7,
+			5,6,
+			6,7
+	};
+	
+	public static class Edge {
+		@Override
+		public int hashCode() {
+			return x+y;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Edge other = (Edge) obj;
+			if (x != other.x && x != other.y)
+				return false;
+			if (y != other.y && y != other.x)
+				return false;
+			return true;
+		}
+
+		int x;
+		int y;
+		
+		public Edge(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
+	public static class Vertex {
+		float x;
+		float y;
+		float z;
+		
+		public Vertex(float x, float y, float z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + Float.floatToIntBits(x);
+			result = prime * result + Float.floatToIntBits(y);
+			result = prime * result + Float.floatToIntBits(z);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Vertex other = (Vertex) obj;
+			if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
+				return false;
+			if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
+				return false;
+			if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z))
+				return false;
+			return true;
+		}
+	}
+	
+	public static class ToggleList<E> extends LinkedList<E> {
+		private static final long serialVersionUID = 1L;
+		public void toggle(E item) {
+			if (this.contains(item)) {
+				this.remove(item);
+			} else {
+				this.add(item);
+			}
+		}		
+	}
+	
+	private LinkedList<Cube> cubes = new LinkedList<>();
+	private IntBuffer index_buffer;
+	
+	public Block(GL4 gl, ShaderState st, int[][][] b, int[] offset, float[] color) {
+		int[] first = null;
+		for (int i=0; i<b.length; i++) {
+			for (int j=0; j<b[i].length; j++) {
+				for (int k=0; k<b[i][j].length; k++) {
+					if (b[i][j][k] == 1) {
+						first = first == null ? new int[] {i,j,k} : first;
+						cubes.add(new Cube(gl, st, color, new int[] {i-first[0]+offset[0],j-first[1]+offset[1],k-first[2]+offset[2]}));
+					}
+				}
+			}
+		}
+		HashMap<Vertex, Integer> vertexToIndex = new HashMap<>();
+		ToggleList<Edge> edges = new ToggleList<>();
+		for (Cube c : cubes) {
+			float[] cube_vertex_data = c.getVertexData();
+			for (int j=0; j<cube_vertex_data.length/3; j++) {
+				Vertex v = new Vertex(cube_vertex_data[3*j],cube_vertex_data[3*j+1],cube_vertex_data[3*j+2]);
+				if (!vertexToIndex.containsKey(v)) {
+					vertexToIndex.put(v, vertexToIndex.size());
+				}
+			}
+		}
+		for (Cube c : cubes) {
+			for (int i=0; i<cube_index_data.length/2; i++) {
+				float[] cube_vertex_data = c.getVertexData();
+				int i1 = cube_index_data[2*i]; int i2 = cube_index_data[2*i+1];
+				Vertex v1 = new Vertex(cube_vertex_data[3*i1], cube_vertex_data[3*i1+1], cube_vertex_data[3*i1+2]);
+				Vertex v2 = new Vertex(cube_vertex_data[3*i2], cube_vertex_data[3*i2+1], cube_vertex_data[3*i2+2]);
+				Edge e = new Edge(vertexToIndex.get(v1), vertexToIndex.get(v2));
+				edges.toggle(e);
+			}
+		}
+		int[] 
+	}
+	
+	public void draw() {
+		for (Cube c : cubes) {
+			c.draw();
+		}
+	}
+}

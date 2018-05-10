@@ -1,0 +1,21 @@
+package graphics;
+
+import java.awt.Component;
+import java.awt.event.KeyAdapter;
+
+
+
+public class Controls extends KeyAdapter {
+	private float verticalAngle;
+	private float horizontalAngle;
+	private float lastTime;
+	
+	public Controls(Component component) {
+		component.addKeyListener(this);
+		
+		this.verticalAngle = 0;
+		this.horizontalAngle = 0;
+		
+		this.lastTime = System.currentTimeMillis();
+	}
+}

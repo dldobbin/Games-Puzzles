@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="graphics.Window"/>
+<fullyQualifiedTypeName name="com.jogamp.opengl.GLProfile"/>
+<fullyQualifiedTypeName name="com.jogamp.opengl.GLCapabilities"/>
+<fullyQualifiedTypeName name="com.jogamp.opengl.awt.GLCanvas"/>
+<fullyQualifiedTypeName name="javax.swing.JFrame"/>
+<fullyQualifiedTypeName name="graphics.BoxFrame"/>
+<fullyQualifiedTypeName name="java.awt.event.KeyAdapter"/>
+<fullyQualifiedTypeName name="com.jogamp.opengl.util.PMVMatrix"/>
+<fullyQualifiedTypeName name="jogamp.opengl.glu.mipmap.HalveImage"/>
+<fullyQualifiedTypeName name="graphics.Controls"/>
+<fullyQualifiedTypeName name="com.jogamp.opengl.util.FPSAnimator"/>
+<fullyQualifiedTypeName name="java.util.Collections"/>
+<fullyQualifiedTypeName name="java.util.stream.Stream"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="solver.Block"/>
+<fullyQualifiedTypeName name="graphics.Cube"/>
+<fullyQualifiedTypeName name="solver.Response"/>
+<fullyQualifiedTypeName name="solver.TetrisCube"/>
+<fullyQualifiedTypeName name="java.util.LinkedList"/>
+<fullyQualifiedTypeName name="javax.swing.event.MouseInputListener"/>
+<fullyQualifiedTypeName name="java.awt.event.MouseListener"/>
+<fullyQualifiedTypeName name="java.awt.event.MouseEvent"/>
+<fullyQualifiedTypeName name="javax.swing.SwingUtilities"/>
+<fullyQualifiedTypeName name="graphics.Test.Tuple"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="graphics.Block.ToggleList"/>
+<fullyQualifiedTypeName name="graphics.Block.Edge"/>
+<fullyQualifiedTypeName name="com.jogamp.common.nio.Buffers"/>
+<fullyQualifiedTypeName name="java.nio.FloatBuffer"/>
+<fullyQualifiedTypeName name="javax.swing.JLabel"/>
+<fullyQualifiedTypeName name="javax.swing.SwingConstants"/>
+<fullyQualifiedTypeName name="java.awt.Dimension"/>
+</qualifiedTypeNameHistroy>

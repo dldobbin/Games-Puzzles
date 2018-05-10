@@ -1,0 +1,56 @@
+package graphics;
+
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.util.glsl.ShaderState;
+
+public class BoxFrame {
+	static final FloatBuffer vertex_data = Buffers.newDirectFloatBuffer(new float[] {
+		-2, -2,  2,
+		-2,  2,  2,
+		 2,  2,  2,
+		 2, -2,  2,
+		 2, -2, -2,
+		 2,  2, -2,
+		-2,  2, -2,
+		-2, -2, -2
+	});
+	
+	static final IntBuffer index_data = Buffers.newDirectIntBuffer(new int[] {
+			0,1,
+			0,3,
+			0,7,
+			1,2,
+			1,6,
+			2,3,
+			2,5,
+			3,4,
+			4,5,
+			4,7,
+			5,6,
+			6,7
+	});
+	
+	static final FloatBuffer color_data = Buffers.newDirectFloatBuffer(colors());
+	
+	static final int VERTEX_BUFFER = 0;
+	static final int COLOR_BUFFER = 1;
+	static final int INDEX_BUFFER = 2;
+	
+	private GL4 gl;
+	private ShaderState st;
+	private int[] buffers;
+	
+	public BoxFrame(GL4 gl, ShaderState st) {
+		this.gl = gl;
+		this.st = st;
+		this.buffers = new int[3];
+		this.gl.glGenBuffers(3, buffers, 0);
+		for (Buffer b : new Buffer[] {vertex_data, index_data, color_data})
+	}
+
+}

@@ -1,0 +1,255 @@
+package solver;
+
+import java.util.Collections;
+import java.util.LinkedList;
+public class TetrisCube {
+	private int[][][] box;
+	private LinkedList<Block> blockList;
+	
+	public TetrisCube() {
+		//Primary positions of the blocks
+		int[][][] block = {
+							{{1,0,0},
+							 {1,1,1},
+							 {0,1,0}},
+							{{1,0,0},
+							 {0,0,0},
+							 {0,0,0}}
+		};
+		Block block1 = new Block("Red crazy", block);
+
+		block = new int[][][]{
+				{{0,1},
+				 {1,1},
+				 {0,1},
+				 {0,1}}
+		};
+		Block block2 = new Block("Red Y", block);
+
+		block = new int[][][]{
+				{{1,1},
+				 {1,1}},
+				{{1,0},
+				 {0,0}}
+		};
+		Block block3 = new Block("Red square", block);
+
+		block = new int[][][]{
+				{{1,0,0},
+				 {1,0,0},
+				 {1,1,1}}
+		};
+		Block block4 = new Block("Red L", block);
+
+		block = new int[][][]{
+				{{1,1},
+				 {0,1},
+				 {0,1}},
+				{{1,0},
+				 {0,0},
+				 {0,0}}
+		};
+		Block block5 = new Block("Yellow L", block);
+
+		block = new int[][][]{
+				{{0,1,0},
+				 {1,1,1},
+				 {0,0,0}},
+				{{0,0,0},
+				 {0,1,0},
+				 {0,1,0}}
+		};
+		Block block6 = new Block("Yellow duck tail", block);
+
+		block = new int[][][]{
+				{{1,1,1},
+				 {0,0,0}},
+				{{0,1,0},
+				 {0,1,0}}
+		};
+		Block block7 = new Block("Yellow duck no tail", block);
+
+		block = new int[][][]{
+				{{1,0},
+				 {1,0},
+				 {0,0}},
+				{{0,0},
+				 {1,1},
+				 {0,1}}
+		};
+		Block block8 = new Block("Yellow corkscrew", block);
+
+		block = new int[][][]{
+				{{1,0},
+				 {1,1},
+				 {0,1},
+				 {0,1}}
+		};
+		Block block9 = new Block("Blue long Z", block);
+
+		block = new int[][][]{
+				{{0,1},
+				 {1,1},
+				 {1,0}},
+				{{0,0},
+				 {0,0},
+				 {1,0}}
+		};
+		Block block10 = new Block("Blue short Z", block);
+
+		block = new int[][][]{
+			{{1,0,0},
+			 {1,0,0},
+			 {1,1,1}},
+			{{0,0,0},
+			 {0,0,0},
+			 {0,0,1}}
+		};
+		Block block11 = new Block("Blue L end nub", block);
+
+		block = new int[][][]{
+			{{1,0,0},
+			 {1,0,0},
+			 {1,1,1}},
+			{{0,0,0},
+			 {0,0,0},
+			 {0,1,0}}
+		};
+		Block block12 = new Block("Blue L mid nub", block);
+
+		blockList = new LinkedList<Block>();
+		blockList.add(block1);
+		blockList.add(block2);
+		blockList.add(block3);
+		blockList.add(block4);
+		blockList.add(block5);
+		blockList.add(block6);
+		blockList.add(block7);
+		blockList.add(block8);
+		blockList.add(block9);
+		blockList.add(block10);
+		blockList.add(block11);
+		blockList.add(block12);
+
+		Collections.shuffle(blockList);
+
+		box = new int[4][4][4];
+	}
+	
+	public Response solve() {
+		return solve(this.box, this.blockList);
+	}
+
+	public Response solve(int[][][] box, LinkedList<Block> blockList) {
+		if (blockList.size() == 0) {
+			Response r = new Response(true);
+			return r;
+		}
+
+		LinkedList<Block> triedList = new LinkedList<Block>();
+		while (blockList.size() > 0) {
+			Block block = blockList.poll();
+			do {
+				int[][][] boxCopy = new int[4][4][4];
+				for (int i=0; i<boxCopy.length; i++) {
+					for (int j=0; j<boxCopy[0].length; j++) {
+						for (int k=0; k<boxCopy[0][0].length; k++) {
+							boxCopy[i][j][k] = box[i][j][k];
+						}
+					}
+				}
+				try {
+					putInBox(boxCopy, block);
+					if (isValid(boxCopy)) {
+						for (Block b : triedList) {
+							b.rotationReset();
+							blockList.add(b);
+						}
+						Response r = solve(boxCopy, blockList);
+						if (r.isSuccess()) {
+							r.setResult(block);
+							return r;
+						}
+						for (Block b : triedList) {
+							blockList.remove(b);
+						}
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {}
+			} while (block.rotate());
+
+			triedList.add(block);
+		}
+
+		for (Block b : triedList) {
+			b.rotationReset();
+			blockList.add(b);
+		}
+
+		return new Response(false);
+	}
+
+	public static boolean isValid(int[][][] box) {
+		for (int i=0; i<4; i++) {
+			for (int j=0; j<4; j++) {
+				for (int k=0; k<4; k++) {
+					if (box[i][j][k] != 0 && box[i][j][k] != 1)
+						return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	public static void putInBox(int[][][] box, Block block) throws ArrayIndexOutOfBoundsException {
+		//Find first empty spot in box
+		int i,j,k;
+		i=j=k=0;
+		while (box[i][j][k] != 0 || i == 4){
+			k++;
+			if (k == 4) {
+				k=0;
+				j++;
+				if (j == 4) {
+					j=0;
+					i++;
+				}
+			}
+		}
+
+		int[][][] b = block.getBlock();
+		//Find first non-empty spot in box
+		int x,y,z;
+		x=y=z=0;
+		while (b[x][y][z] != 1){
+			z++;
+			if (z == b[0][0].length) {
+				z=0;
+				y++;
+				if (y == b[0].length) {
+					y=0;
+					x++;
+				}
+			}
+		}		
+		//put the block in
+		for (int l=0; l<b.length; l++) {
+			for (int m=0; m<b[0].length; m++) {
+				for (int n=0; n<b[0][0].length; n++) {
+					box[i+l-x][j+m-y][k+n-z] += b[l][m][n];
+				}
+			}
+		}
+	}
+
+	public static void displayBox(int[][][] box) {
+		for (int i=0; i<box.length; i++) {
+			for (int j=0; j<box[0].length; j++) {
+				for (int k=0; k<box[0][0].length; k++) {
+					System.out.print(box[i][j][k] + " ");
+				}
+				System.out.print("\n");
+			}
+			System.out.print("\n");
+		}
+	}
+}

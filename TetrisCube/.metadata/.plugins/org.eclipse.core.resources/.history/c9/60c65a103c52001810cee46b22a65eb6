@@ -1,0 +1,23 @@
+package graphics;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+import com.jogamp.common.nio.Buffers;
+
+public class BoxFrame {
+	static final FloatBuffer vertex_data = Buffers.newDirectFloatBuffer(new float[] {
+		-2, -2,  2,
+		-2,  2,  2,
+		 2,  2,  2,
+		 2, -2,  2,
+		 2, -2, -2,
+		 2,  2, -2,
+		-2,  2, -2,
+		-2, -2, -2
+	});
+	static final IntBuffer index_data = Buffers.newDirectIntBuffer(new int[] {
+			
+	});
+
+}

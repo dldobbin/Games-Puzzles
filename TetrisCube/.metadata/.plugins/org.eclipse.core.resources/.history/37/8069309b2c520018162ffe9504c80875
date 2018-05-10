@@ -1,0 +1,22 @@
+package solver;
+
+public class Response {
+	private boolean success;
+	private String result;
+
+	public Response(boolean s) {
+		success = s;
+	}
+
+	public void setResult(String r) {
+		result = r;
+	}
+
+	public String getResult() {
+		return result;
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+}

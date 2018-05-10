@@ -1,0 +1,12 @@
+package solver;
+
+public class Main {
+
+	public static void main(String[] args) {
+		TetrisCube tc = new TetrisCube();
+		Response r = tc.solve();
+		
+		System.out.println(r.getResult());
+	}
+
+}

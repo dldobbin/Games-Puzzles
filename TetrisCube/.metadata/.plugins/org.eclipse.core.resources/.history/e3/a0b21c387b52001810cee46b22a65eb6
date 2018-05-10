@@ -1,0 +1,29 @@
+package graphics;
+
+import java.util.HashMap;
+
+public class Test {
+	private class Tuplep {
+		int x;
+		int y;
+		
+		public Tuplep(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public boolean equals(Tuple obj) {
+			return this.x == obj.x && this.y == obj.y;
+		}
+		
+		
+	}
+	
+	public static void main(String[] args) {
+		HashMap<Tuplep, Integer> map = new HashMap<>();
+		//Tuple a = new Tuple(1, 2);
+		Tuplep b = new Tuplep(1, 2);
+		
+		
+	}
+}

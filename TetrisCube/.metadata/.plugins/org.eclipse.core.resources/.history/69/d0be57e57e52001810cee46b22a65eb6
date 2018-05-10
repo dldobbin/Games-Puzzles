@@ -1,0 +1,52 @@
+package graphics;
+
+import java.util.HashMap;
+
+public class Test {
+	public static class Tuple {
+		@Override
+		public int hashCode() {
+			
+			return x+y;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Tuple other = (Tuple) obj;
+			if (x != other.x && x != other.y)
+				return false;
+			if (y != other.y && y != other.x)
+				return false;
+			return true;
+		}
+
+		int x;
+		int y;
+		
+		public Tuple(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}	
+		
+	}
+	
+	public static void main(String[] args) {
+		HashMap<Tuple, Integer> map = new HashMap<>();
+		Tuple a = new Tuple(1, 2);
+		Tuple b = new Tuple(2, 1);
+		
+		map.put(a, 1);
+		map.put(b, 2);
+		
+		System.out.println(a.hashCode());
+		System.out.println(b.hashCode());
+		System.out.println(a.equals(b));
+		System.out.println(map);
+	}
+}

@@ -1,0 +1,64 @@
+package graphics;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.util.glsl.ShaderState;
+
+public class Block {
+	public static class Edge {
+		@Override
+		public int hashCode() {
+			return x+y;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Edge other = (Edge) obj;
+			if (x != other.x && x != other.y)
+				return false;
+			if (y != other.y && y != other.x)
+				return false;
+			return true;
+		}
+
+		int x;
+		int y;
+		
+		public Edge(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}	
+		
+	}
+	
+	LinkedList<Cube> cubes = new LinkedList<>();
+	HashMap<int[], Integer> indices;
+	
+	public Block(GL4 gl, ShaderState st, int[][][] b, int[] offset, float[] c) {
+		int[] first = null;
+		for (int i=0; i<b.length; i++) {
+			for (int j=0; j<b[i].length; j++) {
+				for (int k=0; k<b[i][j].length; k++) {
+					if (b[i][j][k] == 1) {
+						first = first == null ? new int[] {i,j,k} : first;
+						cubes.add(new Cube(gl, st, c, new int[] {i-first[0]+offset[0],j-first[1]+offset[1],k-first[2]+offset[2]}));
+					}
+				}
+			}
+		}
+	}
+	
+	public void draw() {
+		for (Cube c : cubes) {
+			c.draw();
+		}
+	}
+}

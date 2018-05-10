@@ -1,0 +1,172 @@
+package graphics;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.util.glsl.ShaderState;
+
+public class Block {
+	static final int[] cube_index_data = new int[] {
+			0,1,
+			0,3,
+			0,7,
+			1,2,
+			1,6,
+			2,3,
+			2,5,
+			3,4,
+			4,5,
+			4,7,
+			5,6,
+			6,7
+	};
+	
+	public static class Edge {
+		@Override
+		public int hashCode() {
+			return v1+v2;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Edge other = (Edge) obj;
+			if (v1 != other.v1 && v1 != other.v2)
+				return false;
+			if (v2 != other.v2 && v2 != other.v1)
+				return false;
+			return true;
+		}
+
+		int v1;
+		int v2;
+		
+		public Edge(int x, int y) {
+			this.v1 = x;
+			this.v2 = y;
+		}
+	}
+	
+	public static class Vertex {
+		float x;
+		float y;
+		float z;
+		
+		public Vertex(float x, float y, float z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + Float.floatToIntBits(x);
+			result = prime * result + Float.floatToIntBits(y);
+			result = prime * result + Float.floatToIntBits(z);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Vertex other = (Vertex) obj;
+			if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
+				return false;
+			if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
+				return false;
+			if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z))
+				return false;
+			return true;
+		}
+	}
+	
+	public static class ToggleList<E> extends LinkedList<E> {
+		private static final long serialVersionUID = 1L;
+		public void toggle(E item) {
+			if (this.contains(item)) {
+				this.remove(item);
+			} else {
+				this.add(item);
+			}
+		}		
+	}
+	
+	private LinkedList<Cube> cubes = new LinkedList<>();
+	private FloatBuffer vertex_data;
+	private IntBuffer index_data;
+	private FloatBuffer color_data;
+	private int[] buffers;
+	
+	public Block(GL4 gl, ShaderState st, int[][][] b, int[] offset, float[] color) {
+		int[] first = null;
+		for (int i=0; i<b.length; i++) {
+			for (int j=0; j<b[i].length; j++) {
+				for (int k=0; k<b[i][j].length; k++) {
+					if (b[i][j][k] == 1) {
+						first = first == null ? new int[] {i,j,k} : first;
+						cubes.add(new Cube(gl, st, color, new int[] {i-first[0]+offset[0],j-first[1]+offset[1],k-first[2]+offset[2]}));
+					}
+				}
+			}
+		}
+		HashMap<Vertex, Integer> vertexToIndex = new HashMap<>();
+		ToggleList<Edge> edges = new ToggleList<>();
+		for (Cube c : cubes) {
+			float[] cube_vertex_data = c.getVertexData();
+			for (int j=0; j<cube_vertex_data.length/3; j++) {
+				Vertex v = new Vertex(cube_vertex_data[3*j],cube_vertex_data[3*j+1],cube_vertex_data[3*j+2]);
+				if (!vertexToIndex.containsKey(v)) {
+					vertexToIndex.put(v, vertexToIndex.size());
+				}
+			}
+		}
+		for (Cube c : cubes) {
+			for (int i=0; i<cube_index_data.length/2; i++) {
+				float[] cube_vertex_data = c.getVertexData();
+				int i1 = cube_index_data[2*i]; int i2 = cube_index_data[2*i+1];
+				Vertex v1 = new Vertex(cube_vertex_data[3*i1], cube_vertex_data[3*i1+1], cube_vertex_data[3*i1+2]);
+				Vertex v2 = new Vertex(cube_vertex_data[3*i2], cube_vertex_data[3*i2+1], cube_vertex_data[3*i2+2]);
+				Edge e = new Edge(vertexToIndex.get(v1), vertexToIndex.get(v2));
+				edges.toggle(e);
+			}
+		}
+		float[] vd = new float[vertexToIndex.size()*3];
+		for (Vertex v : vertexToIndex.keySet()) {
+			int i = vertexToIndex.get(v);
+			vd[3*i] = v.x;
+			vd[3*i+1] = v.y;
+			vd[3*i+2] = v.z;
+		}
+		vertex_data = FloatBuffer.wrap(vd);
+		int[] id = new int[edges.size()*2];
+		for (int i=0; i<edges.size(); i++) {
+			id[2*i] = edges.get(i).v1;
+			id[2*i+1] = edges.get(i).v2;
+		}
+		index_data = IntBuffer.wrap(id);
+		color_data = FloatBuffer.wrap(BoxFrame.colors(vertex_data));
+		
+		gl.glGenBuffers(3, buffers, 0);
+	}
+	
+	public void draw() {
+		for (Cube c : cubes) {
+			c.draw();
+		}
+	}
+}

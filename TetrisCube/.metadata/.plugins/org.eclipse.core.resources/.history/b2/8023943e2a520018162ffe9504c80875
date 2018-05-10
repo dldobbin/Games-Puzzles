@@ -1,0 +1,23 @@
+package solver;
+
+public class Test {
+	public static void main(String[] args) {
+		int[][][] block = {
+							{{1,0,0},
+							 {1,1,1},
+							 {0,1,0}},
+							{{1,0,0},
+							 {0,0,0},
+							 {0,0,0}}
+		};
+
+		Block testBlock = new Block("Test Block", block);
+
+		testBlock.rotateLeft();
+		testBlock.rotateUp();
+
+		System.out.println(testBlock);
+		testBlock.printBlock();
+
+	}
+}

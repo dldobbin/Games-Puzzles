@@ -1,0 +1,14 @@
+package solver;
+
+public class Main {
+
+	public static void main(String[] args) {
+		TetrisCube tc = new TetrisCube();
+		Response r = tc.solve();
+		
+		for (Block b : r.getResult()) {
+			System.out.println(b);
+		}
+	}
+
+}

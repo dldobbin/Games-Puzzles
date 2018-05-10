@@ -1,0 +1,106 @@
+package graphics;
+
+import java.nio.FloatBuffer;
+
+import javax.swing.JFrame;
+
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.glsl.ShaderCode;
+import com.jogamp.opengl.util.glsl.ShaderProgram;
+import com.jogamp.opengl.util.glsl.ShaderState;
+
+import solver.Response;
+
+public class Window extends JFrame implements GLEventListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private ShaderState st = new ShaderState();
+	private Controls controls;
+	
+	private BoxFrame bf;
+	private Response r;
+	
+	public Window() {
+		super("TetrisCube");
+		GLProfile profile = GLProfile.get(GLProfile.GL4);
+		GLCapabilities capabilities = new GLCapabilities(profile);
+		GLCanvas canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		
+		this.setName("TetrisCube");
+		this.getContentPane().add(canvas);
+		this.setSize(1024, 768);
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setResizable(false);
+		this.setVisible(true);
+		
+		canvas.requestFocusInWindow();
+		controls = new Controls(canvas);
+		FPSAnimator anim = new FPSAnimator(canvas, 60);
+		anim.start();
+	}
+
+	@Override
+	public void display(GLAutoDrawable drawable) {
+		GL4 gl = drawable.getGL().getGL4();
+		gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
+		
+		st.useProgram(gl, true);
+		
+		FloatBuffer matrix = controls.getMatrix();
+		int MatrixID = st.getUniformLocation(gl, "MVP");
+		gl.glUniformMatrix4fv(MatrixID, 1, false, matrix);
+		
+		bf.draw();
+		block.draw();
+		
+		st.useProgram(gl, false);
+		
+		gl.glFlush();		
+	}
+
+	@Override
+	public void dispose(GLAutoDrawable drawable) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void init(GLAutoDrawable drawable) {
+		GL4 gl = drawable.getGL().getGL4();
+		gl.glClearColor(.95f, .9f, .9f, 1f);
+		gl.glEnable(GL4.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL4.GL_LESS);
+		
+		ShaderCode vp = ShaderCode.create(gl, GL4.GL_VERTEX_SHADER, this.getClass(), "shader", "shader/bin", "vertex", true);
+		ShaderCode fp = ShaderCode.create(gl, GL4.GL_FRAGMENT_SHADER, this.getClass(), "shader", "shader/bin", "fragment", true);
+		ShaderProgram sp = new ShaderProgram();
+		sp.add(gl, vp, System.err);
+		sp.add(gl, fp, System.err);
+		st.attachShaderProgram(gl, sp, false);
+		
+		bf = new BoxFrame(gl, st);
+		
+	}
+
+	@Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void main(String[] args) {
+		Window window = new Window();
+	}
+
+}
