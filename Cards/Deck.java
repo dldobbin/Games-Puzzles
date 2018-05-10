@@ -33,23 +33,4 @@ public class Deck {
 	public Card draw() {
 		return deck.poll();
 	}
-
-	public LinkedList<LinkedList<Card>> deal(int players, int cards) {
-		LinkedList<LinkedList<Card>> hands = new LinkedList<LinkedList<Card>>();
-		for (int i=0; i<players+1; i++) {
-			hands.add(new LinkedList<Card>());
-		}
-
-		int n = players*cards;
-		if(cards == 0 || n>52)
-			n = 52;
-		for(int i=0; i<n; i++) {
-			hands.get(i%players).add(deck.get(i));
-		}
-		for (int i=n; i<52; i++) {
-			hands.get(players).add(deck.get(i));
-		}
-
-		return hands;
-	}
 }

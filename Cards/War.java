@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class NewWar {
+public class War {
 	private ArrayList<Player> players = new ArrayList<>();
 	private int turns = 0;
 	
@@ -30,7 +30,7 @@ public class NewWar {
 		}
 	}
 	
-	public NewWar(int number_of_players) {
+	public War(int number_of_players) {
 		for (int i=0; i<number_of_players; i++)
 			players.add(new Player("Player " + (i+1)));
 		Deck deck = new Deck();
@@ -85,7 +85,7 @@ public class NewWar {
 	}
 	
 	public static void main(String[] args) {
-		NewWar game = new NewWar(Integer.parseInt(args[0]));
+		War game = new War(Integer.parseInt(args[0]));
 		while (game.getWinner() == null) {
 			game.doTurn();
 		}
